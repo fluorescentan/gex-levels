@@ -1,0 +1,22 @@
+# render.yaml — Deploy to Render.com free tier
+# Cost: $0. No API key. No subscription.
+#
+# Data source: CBOE delayed options chain (free, public)
+# Poll rate: every 30 minutes during market hours (8 AM – 4:30 PM ET)
+# Free tier note: service sleeps after 15 min of inactivity.
+# The background poller keeps it alive during market hours automatically.
+
+services:
+  - type: web
+    name: gex-levels
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: TICKER
+        value: "SPY"
+      - key: POLL_INTERVAL_MIN
+        value: "30"
+    healthCheckPath: /health
